@@ -162,6 +162,11 @@ var Slider = React.createClass({
     * Used to configure the animation parameters.  These are the same parameters in the Animated library.
     */
     animationConfig : PropTypes.object,
+
+    /**
+    * Used to wrap thumb view in another component, or to replace it with a custom view .
+    */
+    thumbComponent : PropTypes.func,
   },
   getInitialState() {
     return {
@@ -223,6 +228,12 @@ var Slider = React.createClass({
       || !styleEqual(this.props.trackStyle, nextProps.trackStyle)
       || !styleEqual(this.props.thumbStyle, nextProps.thumbStyle);
   },
+
+  _createWrappedThumbView(view) {
+    const { thumbComponent } = this.props;
+    return thumbComponent ? thumbComponent(view) : view;
+  },
+
   render() {
     var {
       minimumValue,
@@ -267,7 +278,6 @@ var Slider = React.createClass({
         <Animated.View
           onLayout={this._measureThumb}
           style={[
-            {backgroundColor: thumbTintColor},
             mainStyles.thumb, thumbStyle,
             {
               transform: [
@@ -277,7 +287,21 @@ var Slider = React.createClass({
               ...valueVisibleStyle
             }
           ]}
-        />
+        >
+
+          {
+            this._createWrappedThumbView(
+                <View
+                style={[
+                  {backgroundColor: thumbTintColor},
+                  mainStyles.thumb,
+                   thumbStyle,
+                 ]}
+               />
+             )
+          }
+
+        </Animated.View>
         <View
           style={[defaultStyles.touchArea, touchOverflowStyle]}
           {...this._panResponder.panHandlers}>
