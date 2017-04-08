@@ -167,6 +167,11 @@ var Slider = React.createClass({
     * Used to wrap thumb view in another component, or to replace it with a custom view .
     */
     thumbComponent : PropTypes.func,
+
+    /**
+    * Add a slider caption component.
+    */
+    captionComponent : PropTypes.element,
   },
   getInitialState() {
     return {
@@ -246,6 +251,7 @@ var Slider = React.createClass({
       trackStyle,
       thumbStyle,
       debugTouchArea,
+      captionComponent,
       ...other
     } = this.props;
     var {value, containerSize, trackSize, thumbSize, allMeasured} = this.state;
@@ -275,14 +281,16 @@ var Slider = React.createClass({
           style={[{backgroundColor: maximumTrackTintColor,}, mainStyles.track, trackStyle]}
           onLayout={this._measureTrack} />
         <Animated.View style={[mainStyles.track, trackStyle, minimumTrackStyle]} />
+        { captionComponent && <View style={[defaultStyles.caption, { height: thumbSize.height }]}>{captionComponent}</View>}
         <Animated.View
           onLayout={this._measureThumb}
           style={[
-            mainStyles.thumb, thumbStyle,
+            {backgroundColor: thumbTintColor},
+            mainStyles.thumb,
+            thumbStyle,
             {
               transform: [
-                { translateX: thumbLeft },
-                { translateY: (trackSize.height - thumbSize.height) / 2 }
+                { translateX: thumbLeft }
               ],
               ...valueVisibleStyle
             }
@@ -293,9 +301,8 @@ var Slider = React.createClass({
             this._createWrappedThumbView(
                 <View
                 style={[
-                  {backgroundColor: thumbTintColor},
                   mainStyles.thumb,
-                   thumbStyle,
+                  thumbStyle,
                  ]}
                />
              )
@@ -550,6 +557,12 @@ var defaultStyles = StyleSheet.create({
     position: 'absolute',
     backgroundColor: 'green',
     opacity: 0.5,
+  },
+  caption: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    flexDirection: 'row'
   }
 });
 
