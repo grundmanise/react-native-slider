@@ -460,7 +460,7 @@ const Slider = React.createClass({
 
   _fireChangeEvent(event) {
     if (this.props[event]) {
-      this.props[event](this._getLeftThumbValue(), this._getRightThumbValue());
+      this.props[event](this._getLeftThumbValue(), this._getRightThumbValue(), this.isLeftThumb);
     }
   },
 
