@@ -130,7 +130,7 @@ const Slider = React.createClass({
     /**
      * The color used for the track.
      */
-    trackColor: PropTypes.string,
+    trackColor: PropTypes.oneOfType([PropTypes.string, PropTypes.object]),
 
     /**
      * The color used for the selected portion of the track. Left of single button
@@ -217,8 +217,8 @@ const Slider = React.createClass({
     captionComponent : PropTypes.element,
 
     /**
-     * Set this to true to have two touchpoints on slider for a range.
-     */
+    * Set this to true to have two touchpoints on slider for a range.
+    */
     multiTouch: PropTypes.bool,
 
   },
@@ -446,7 +446,7 @@ const Slider = React.createClass({
     }
   },
 
-  _setCurrentValueAnimated(value: number) {
+  _setCurrentValueAnimated(value: number, rightValue: number) {
     var animationType   = this.props.animationType;
     var animationConfig = Object.assign(
           {},
@@ -455,7 +455,18 @@ const Slider = React.createClass({
           {toValue : value}
         );
 
-    Animated[animationType](this.state.value, animationConfig).start();
+    var animationConfigRight = Object.assign(
+          {},
+          DEFAULT_ANIMATION_CONFIGS[animationType],
+          this.props.animationConfig,
+          {toValue : rightValue}
+        );
+
+    Animated.parallel([
+        Animated[animationType](this.state.value, animationConfig),
+        Animated[animationType](this.state.rightValue, animationConfigRight)
+    ]).start();
+
   },
 
   _fireChangeEvent(event) {
